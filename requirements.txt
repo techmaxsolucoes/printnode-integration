@@ -1,3 +1,3 @@
 frappe
 -e git+https://github.com/PrintNode/PrintNode-Python.git#egg=printnodeapi
--e git+https://github.com/fvdsn/py-xml-escpos#egg=xmlescpos
+-e git+https://github.com/fvdsn/py-xml-escpos#egg=pyxmlescpos
