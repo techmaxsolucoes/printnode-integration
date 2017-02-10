@@ -89,7 +89,7 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 											frappe.call({
 												"method": "printnode_integration.api.print_via_printnode",
 												"args": {
-													"action": row.action,
+													"action": row.name,
 													"doctype": cur_frm.doctype,
 													"docname": cur_frm.docname
 												}

@@ -7,6 +7,7 @@ import frappe
 import hashlib
 
 from base64 import b64encode, b64decode
+from frappe import _
 from frappe.utils import flt, cint, get_datetime, date_diff, nowdate
 from frappe.utils.file_manager import get_file
 from frappe.utils.jinja import render_template
@@ -54,7 +55,7 @@ def print_via_printnode(action, **kwargs):
 	settings = frappe.get_doc("Print Node Settings", "Print Node Settings")
 	if not settings.api_key:
 		frappe.throw(
-			__("Your Print Node API Key is not configured in Print Node Settings")
+			_("Your Print Node API Key is not configured in Print Node Settings")
 		)
 	if not frappe.db.exists("Print Node Action", action):
 		frappe.throw(
