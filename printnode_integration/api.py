@@ -56,13 +56,12 @@ def print_via_printnode(action, **kwargs):
 		frappe.throw(
 			__("Your Print Node API Key is not configured in Print Node Settings")
 		)
-	action = settings.get("actions", {"name": action})
-	if not action:
+	if not frappe.db.exists("Print Node Action", action):
 		frappe.throw(
-			__("Unable to find an action in Print settings to execute this print")
+			_("Unable to find an action in Print settings to execute this print")
 		)
 	else:
-		action = action[0]
+		action = frappe.get_doc("Print Node Action", action)
 
 	if action.get("capabilities"):
 		print_settings = json.loads(action.capabilities)
