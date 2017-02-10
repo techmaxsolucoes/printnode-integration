@@ -60,4 +60,4 @@ class PrintNodeSettings(Document):
 			if "capabilities" in h:
 				h.pop("capabilities")
 		
-		self.hardware = json.loads(hardware)
+		self.hardware = json.dumps(hardware)
