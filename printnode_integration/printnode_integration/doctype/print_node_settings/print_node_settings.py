@@ -53,9 +53,10 @@ class PrintNodeSettings(Document):
 					"computer": pc.id
 				})
 
-		self.hardware = json.dumps(hardware)
-
 		frappe.db.sql("DELETE FROM `tabPrint Node Hardware`");
 
 		for h in hardware:
 			frappe.new_doc("Print Node Hardware").update(h).insert()
+			h.pop("capabilities")
+		
+		self.hardware = json.loads(hardware)
