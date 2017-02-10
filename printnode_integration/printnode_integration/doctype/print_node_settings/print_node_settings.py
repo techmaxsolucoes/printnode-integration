@@ -57,6 +57,7 @@ class PrintNodeSettings(Document):
 
 		for h in hardware:
 			frappe.new_doc("Print Node Hardware").update(h).insert()
-			h.pop("capabilities")
+			if capabilities in h:
+				h.pop("capabilities")
 		
 		self.hardware = json.loads(hardware)
