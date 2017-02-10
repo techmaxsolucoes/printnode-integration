@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include printnode_integration *.css
+recursive-include printnode_integration *.csv
+recursive-include printnode_integration *.html
+recursive-include printnode_integration *.ico
+recursive-include printnode_integration *.js
+recursive-include printnode_integration *.json
+recursive-include printnode_integration *.md
+recursive-include printnode_integration *.png
+recursive-include printnode_integration *.py
+recursive-include printnode_integration *.svg
+recursive-include printnode_integration *.txt
+recursive-exclude printnode_integration *.pyc
