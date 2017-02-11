@@ -79,9 +79,8 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 							if (res && res.message && res.message.length){
 								res.message.forEach(function(row){
 									row = res.message[i];
-									debugger;
 									if ((row.depends_on && row.depends_on.length) && !evaluate_depends_on(row.depends_on, {"doc": cur_frm.doc})){
-										continue;
+										return;
 									}
 									cur_frm.add_custom_button(row.action, function(){
 										if (row.printable_type == "Print Format"){
