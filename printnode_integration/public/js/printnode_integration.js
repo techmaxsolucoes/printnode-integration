@@ -77,8 +77,7 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 						},
 						"callback": function(res){
 							if (res && res.message && res.message.length){
-								var row;
-								for (var i in res.message){
+								res.message.forEach(function(row){
 									row = res.message[i];
 									debugger;
 									if ((row.depends_on && row.depends_on.length) && !evaluate_depends_on(row.depends_on, {"doc": cur_frm.doc})){
@@ -97,8 +96,8 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 										} else {
 											print_attachment(row);
 										}
-									}, __('Print Node Integration'))
-								}
+									}, __('Print Node Integration'));
+								});
 							}
 						}
 					});
