@@ -78,7 +78,6 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 						"callback": function(res){
 							if (res && res.message && res.message.length){
 								res.message.forEach(function(row){
-									row = res.message[i];
 									if ((row.depends_on && row.depends_on.length) && !evaluate_depends_on(row.depends_on, {"doc": cur_frm.doc})){
 										return;
 									}
