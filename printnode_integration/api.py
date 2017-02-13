@@ -11,6 +11,7 @@ from frappe import _
 from frappe.utils import flt, cint, get_datetime, date_diff, nowdate
 from frappe.utils.file_manager import get_file
 from frappe.utils.jinja import render_template
+from frappe.utils.data import scrub_urls
 from frappe.utils.pdf import get_pdf
 from xmlescpos.escpos import Escpos, StyleStack
 
@@ -40,7 +41,7 @@ class IOPrinter(Escpos):
 def get_print_content(print_format, doctype, docname, is_escpos=False):
 	doc = frappe.get_doc(doctype, docname)
 	template = frappe.db.get_value("Print Format", print_format, "html")
-	content = render_template(template, {"doc": doc})
+	content = scrub_urls(render_template(template, {"doc": doc}))
 
 	if is_escpos:
 		printer = IOPrinter()
