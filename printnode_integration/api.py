@@ -40,8 +40,11 @@ class IOPrinter(Escpos):
 
 def get_print_content(print_format, doctype, docname, is_escpos=False):
 	doc = frappe.get_doc(doctype, docname)
-	template = frappe.db.get_value("Print Format", print_format, "html")
-	content = scrub_urls(render_template(template, {"doc": doc}))
+	if is_escpos:
+		template = frappe.db.get_value("Print Format", print_format, "html")
+		content = render_template(template, {"doc": doc})
+	else:
+		content = frappe.get_print(doctype. docname, print_format, doc=doc)
 
 	if is_escpos:
 		printer = IOPrinter()
