@@ -53,9 +53,11 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 					}], function(args){
 					frappe.call({
 						"method": "printnode_integration.api.print_via_printnode",
+						"freeze": true,
+						"freeze_message": __("Sending attachment to the printer"),
 						"args": {
-						"action": row.name,
-						"filename": args.attachment
+						    "action": row.name,
+						    "filename": args.attachment
 						}
 					});
 				}, __("Select an Attachment"), __("Print"))
@@ -85,6 +87,8 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 										if (row.printable_type == "Print Format"){
 											frappe.call({
 												"method": "printnode_integration.api.print_via_printnode",
+												"freeze": true,
+												"freeze_message": __("Sending document to the printer"),
 												"args": {
 													"action": row.name,
 													"doctype": cur_frm.doctype,
