@@ -42,7 +42,7 @@ def get_print_content(print_format, doctype, docname, is_escpos=False):
 	if is_escpos:
 		doc = frappe.get_doc(doctype, docname)
 		template = frappe.db.get_value("Print Format", print_format, "html")
-		content = render_template(template, {"doc": doc})
+		content = render_template(template, {"doc": doc}).replace("<br>", "<br/>")
 	else:
 		content = frappe.get_print(doctype, docname, print_format)
 
@@ -52,7 +52,8 @@ def get_print_content(print_format, doctype, docname, is_escpos=False):
 		raw = printer.get_content()
 	else:
 		raw = get_pdf(content)	
-		return b64encode(raw)
+	
+	return b64encode(raw)
 
 @frappe.whitelist()
 def print_via_printnode(action, **kwargs):
