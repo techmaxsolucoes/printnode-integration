@@ -39,12 +39,12 @@ class IOPrinter(Escpos):
 
 
 def get_print_content(print_format, doctype, docname, is_escpos=False):
-	doc = frappe.get_doc(doctype, docname)
 	if is_escpos:
+		doc = frappe.get_doc(doctype, docname)
 		template = frappe.db.get_value("Print Format", print_format, "html")
 		content = render_template(template, {"doc": doc})
 	else:
-		content = frappe.get_print(doctype, docname, print_format, doc=doc)
+		content = frappe.get_print(doctype, docname, print_format)
 
 	if is_escpos:
 		printer = IOPrinter()
