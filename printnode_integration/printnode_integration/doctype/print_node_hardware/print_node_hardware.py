@@ -8,4 +8,7 @@ from frappe.model.document import Document
 
 class PrintNodeHardware(Document):
 	def autoname(self):
-		self.name = "-".join([self.hw_type, str(self.hw_id)])
+		if self.hw_type == "Computer":
+			self.name = "-".join([self.hw_type, self.hw_name])
+		else:
+			self.name = "-".join([self.hw_type, self.computer, self.hw_name])
