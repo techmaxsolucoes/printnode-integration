@@ -70,6 +70,12 @@ app_include_js = "/assets/printnode_integration/js/printnode_integration.js"
 # ---------------
 # Hook on document methods and events
 
+doc_events = {
+	"*": {
+		"on_submit": "printnode_integration.events.on_submit"
+	}
+}
+
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
