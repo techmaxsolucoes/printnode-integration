@@ -50,7 +50,7 @@ class PrintNodeSettings(Document):
 					"hw_type": "Scale",
 					"hw_id": scale.product_id,
 					"hw_name": scale.device_name,
-					"computer": pc.id
+					"computer": pc.name
 				})
 
 		frappe.db.sql("DELETE FROM `tabPrint Node Hardware`");
