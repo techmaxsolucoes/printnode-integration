@@ -38,11 +38,13 @@ class IOPrinter(Escpos):
 		return self.io.getvalue()
 
 
-def get_print_content(print_format, doctype, docname, is_escpos=False):
-	if is_escpos:
+def get_print_content(print_format, doctype, docname, is_escpos=False, is_raw=False):
+	if is_escpos or is_raw:
 		doc = frappe.get_doc(doctype, docname)
 		template = frappe.db.get_value("Print Format", print_format, "html")
-		content = render_template(template, {"doc": doc}).replace("<br>", "<br/>")
+		content = render_template(template, {"doc": doc})
+		if is_escpos:
+			content.replace("<br>", "<br/>")
 	else:
 		content = frappe.get_print(doctype, docname, print_format)
 
@@ -50,8 +52,12 @@ def get_print_content(print_format, doctype, docname, is_escpos=False):
 		printer = IOPrinter()
 		printer.receipt(content)
 		raw = printer.get_content()
+	elif is_raw:
+		raw = content
 	else:
 		raw = get_pdf(content)	
+
+	#frappe.msgprint("<pre>%s</pre>" %raw)
 	
 	return b64encode(raw)
 
@@ -83,7 +89,8 @@ def print_via_printnode(action, **kwargs):
 			action.print_format,
 			kwargs.get("doctype"),
 			kwargs.get("docname"),
-			action.is_xml_esc_pos
+			action.is_xml_esc_pos,
+			action.is_raw_text
 		)
 		gateway.PrintJob(
 			printer=int(printer),

@@ -76,6 +76,16 @@ frappe.ui.form.on("Print Node Action", "printable_type", function(frm, cdt, cdn)
 	cur_frm.set_df_property("print_format", "reqd", doc.printable_type === "Attachment", d.parentfield, cdn);
 });
 
+frappe.ui.form.on("Print Node Action", "is_xml_escpos", function(frm, cdt, cdn){
+    var d = locals[cdt][cdn];
+    if (d.is_raw_text && d.is_xml_escpos) frappe.model.set_value( d.doctype, d.name, 'is_raw_text', !d.is_xml_escpos );
+});
+
+frappe.ui.form.on("Print Node Action", "is_raw_text", function(frm, cdt, cdn){
+    var d = locals[cdt][cdn];
+    if (d.is_xml_escpos && d.is_raw_text) frappe.model.set_value( d.doctype, d.name, 'is_xml_escpos', !d.is_raw_text );
+});
+
 frappe.ui.form.on("Print Node Action", "set_print_job_options", function(frm, cdt, cdn){
 	var d = locals[cdt][cdn],
 		fields = [
