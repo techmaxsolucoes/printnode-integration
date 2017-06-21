@@ -92,9 +92,10 @@ def print_via_printnode(action, **kwargs):
 			action.is_xml_esc_pos,
 			action.is_raw_text
 		)
+		raw = action.is_xml_esc_pos or action.is_raw_text
 		gateway.PrintJob(
 			printer=int(printer),
-			job_type="raw" if action.is_xml_esc_pos else "pdf",
+			job_type="raw" if raw else "pdf",
 			title=action.action,
 			base64=print_content,
 			**print_settings
