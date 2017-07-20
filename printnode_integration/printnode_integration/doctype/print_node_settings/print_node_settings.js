@@ -88,21 +88,22 @@ frappe.ui.form.on("Print Node Action", "is_raw_text", function(frm, cdt, cdn){
 
 frappe.ui.form.on("Print Node Action", "set_print_job_options", function(frm, cdt, cdn){
 	var d = locals[cdt][cdn],
+	    capabilities = d.capabilities ? JSON.parse(d.capabilities) : {};
 		fields = [
 		{"fieldtype": "Section Break", "label": __("Print Job Options")},
-		{"fieldtype": "Int", "label": __("Copies"), "fieldname": "copies", "default": 1, "reqd": 1},
-		{"fieldtype": "Select", "label": __("Rotate"), "fieldname": "rotate", "options": [
+		{"fieldtype": "Int", "label": ("Copies"), "fieldname": "copies", "default": capabilities.copies, "reqd": 1},
+		{"fieldtype": "Select", "label": ("Rotate"), "fieldname": "rotate", "options": [
 			null, "90", "180", "120" 
-		]},
+		], "default": capabilities.rotate},
 		{"fieldtype": "Data", "label": __("Pages"), "fieldname": "pages", "description": __(
-			"A set of pages to print from a PDF. A few quick examples <br>E.g. 1,3 prints pages 1 and 3. <br>-5 prints pages 1 through 5 inclusive. <br>- prints all pages. <br>Different components can be combined with a comma. <br>1,3- prints all pages except page 2.")},
+			"A set of pages to print from a PDF. A few quick examples <br>E.g. 1,3 prints pages 1 and 3. <br>-5 prints pages 1 through 5 inclusive. <br>- prints all pages. <br>Different components can be combined with a comma. <br>1,3- prints all pages except page 2."), "default": capabilities.default},
 		{"fieldtype": "Column Break"},
-		{"fieldtype": "Check", "label": __("Collate"), "fieldname": "collate"},
-		{"fieldtype": "Select", "label": __("Duplex"), "fieldname": "dupplext", "options": [
+		{"fieldtype": "Check", "label": __("Collate"), "fieldname": "collate", "default": capabilities.collate},
+		{"fieldtype": "Select", "label": __("Duplex"), "fieldname": "dupplex", "options": [
 			null,
 			{"label": __("Long Edge"), "value": "long-edge"},
 			{"label": __("Short Edge"), "value": "short-edge"}
-		]}];
+		], "default": capabilities.dupplex}];
 
 	frappe.prompt(
 		fields,
