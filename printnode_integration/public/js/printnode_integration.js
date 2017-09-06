@@ -65,7 +65,7 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 			}
 
 		if (event_name === "refresh" && cur_frm){
-			handlers.push(
+			(handlers.new_style || handlers).push(
 				function(){
 					frappe.call({
 						"method": "frappe.client.get_list",
