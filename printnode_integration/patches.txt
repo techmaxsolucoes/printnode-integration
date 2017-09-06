@@ -1,2 +1,2 @@
-execute:frappe.reload_doc("Print Node Action")
+execute:frappe.reload_doc("printnode_integration", "doctype", "print_node_action")
 printnode_integration.patches.deprecate_print_on_submit
