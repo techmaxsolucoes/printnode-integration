@@ -8,7 +8,7 @@ import hashlib
 
 from base64 import b64encode, b64decode
 from frappe import _
-from frappe.utils import flt, cint, get_datetime, date_diff, nowdate
+from frappe.utils import flt, cint, get_datetime, date_diff, nowdate, now_datetime
 from frappe.utils.file_manager import get_file
 from frappe.utils.jinja import render_template
 from frappe.utils.data import scrub_urls
@@ -109,3 +109,22 @@ def print_via_printnode(action, **kwargs):
 			base64=print_content,
 			**print_settings
 		)
+
+	job = frappe.new_doc("Print Node Job").update({
+		"print_node_action": action.name,
+		"printer_id": action.printer,
+		"print_type": action.printable_type,
+		"file_link": kwargs.get("filename"),
+		"print_format": action.print_format,
+		"ref_type": kwargs.get("doctype"),
+		"ref_name": kwargs.get("docname"),
+		"is_xml_esc_pos": action.is_xml_esc_pos,
+		"is_raw_text": action.is_raw_text,
+		"print_job_name": action.action,
+		"copies": 1,
+		"job_owner": frappe.local.user,
+		"print_timestamp": now_datetime()
+	})
+	job.flags.ignore_permissions = True
+	job.flags.ignore_validate = True
+	job.insert()
