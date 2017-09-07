@@ -122,7 +122,7 @@ def print_via_printnode(action, **kwargs):
 		"is_raw_text": action.is_raw_text,
 		"print_job_name": action.action,
 		"copies": 1,
-		"job_owner": frappe.local.user,
+		"job_owner": frappe.local.session.user,
 		"print_timestamp": now_datetime()
 	})
 	job.flags.ignore_permissions = True
