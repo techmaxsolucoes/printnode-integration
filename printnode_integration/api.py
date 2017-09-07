@@ -115,7 +115,7 @@ def print_via_printnode(action, **kwargs):
 		"printer_id": action.printer,
 		"print_type": action.printable_type,
 		"file_link": kwargs.get("filename"),
-		"print_format": action.print_format if not action.is_standard else "Standard",
+		"print_format": action.print_format if not action.use_standard else "Standard",
 		"ref_type": kwargs.get("doctype"),
 		"ref_name": kwargs.get("docname"),
 		"is_xml_esc_pos": action.is_xml_esc_pos,
