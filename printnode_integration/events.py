@@ -24,7 +24,7 @@ def print_via_printnode( doc, event ):
 		api.print_via_printnode(d.name, doctype=doc.doctype, docname=doc.name)
 
 
-def on_insert( doc, handler=None ):
+def after_insert( doc, handler=None ):
 	print_via_printnode( doc, "Insert" )
 
 def on_update( doc, handler=None ):

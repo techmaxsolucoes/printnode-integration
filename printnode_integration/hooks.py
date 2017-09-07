@@ -72,7 +72,7 @@ app_include_js = "/assets/printnode_integration/js/printnode_integration.js"
 
 doc_events = {
 	"*": {
-		"on_insert": "printnode_integration.events.on_insert",
+		"after_insert": "printnode_integration.events.after_insert",
 		"on_update": "printnode_integration.events.on_update",
 		"on_submit": "printnode_integration.events.on_submit"
 	}
