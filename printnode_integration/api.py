@@ -86,7 +86,7 @@ def print_via_printnode(action, **kwargs):
 
 	if action.printable_type == "Print Format":
 		print_content = get_print_content(
-			action.print_format,
+			action.print_format if not action.use_standard else "Standard",
 			kwargs.get("doctype"),
 			kwargs.get("docname"),
 			action.is_xml_esc_pos,
