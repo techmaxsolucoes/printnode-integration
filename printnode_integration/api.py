@@ -98,7 +98,7 @@ def print_via_printnode(action, **kwargs):
 			job_type="raw" if raw else "pdf",
 			title=action.action,
 			base64=print_content,
-			**print_settings
+			options=print_settings
 		)
 
 	else:
@@ -107,7 +107,7 @@ def print_via_printnode(action, **kwargs):
 			printer=int(printer),
 			job_type="pdf" if kwargs.get("filename", "").lower().endswith(".pdf") else "raw",
 			base64=print_content,
-			**print_settings
+			options=print_settings
 		)
 
 	job = frappe.new_doc("Print Node Job").update({
@@ -121,7 +121,7 @@ def print_via_printnode(action, **kwargs):
 		"is_xml_esc_pos": action.is_xml_esc_pos,
 		"is_raw_text": action.is_raw_text,
 		"print_job_name": action.action,
-		"copies": 1,
+		"copies": print_settings.get('copies', 1),
 		"job_owner": frappe.local.session.user,
 		"print_timestamp": now_datetime()
 	})
