@@ -57,7 +57,9 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 						"freeze_message": __("Sending attachment to the printer"),
 						"args": {
 						    "action": row.name,
-						    "filename": args.attachment
+							"filename": args.attachment,
+							"doctype": cur_frm.doctype,
+							"docname": cur_frm.docname
 						}
 					});
 				}, __("Select an Attachment"), __("Print"))
