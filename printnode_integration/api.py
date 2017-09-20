@@ -100,7 +100,6 @@ def print_via_printnode(action, **kwargs):
 			base64=print_content,
 			options=print_settings
 		)
-
 	else:
 		print_content = b64encode(get_file(kwargs.get("filename", ""))[1])
 		gateway.PrintJob(
@@ -113,7 +112,7 @@ def print_via_printnode(action, **kwargs):
 	job = frappe.new_doc("Print Node Job").update({
 		"print_node_action": action.name,
 		"printer_id": action.printer,
-		"print_type": action.printable_type,
+		"print_type": "File" if action.printable_type == "Attachment" else "Print Format",
 		"file_link": kwargs.get("filename"),
 		"print_format": action.print_format if not action.use_standard else "Standard",
 		"ref_type": kwargs.get("doctype"),
