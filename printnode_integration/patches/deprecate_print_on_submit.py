@@ -11,10 +11,10 @@ def execute():
 	else:
 		config = frappe.get_conf()
 
-    if frappe.db.sql('''
-	SELECT * FROM information_schema.COLUMNS 
-	WHERE TABLE_SCHEMA=%s
-		AND TABLE_NAME="tabPrint Node Action"
-		AND COLUMN_NAME = "print_on_submit"''', (config.db_name,)):
-	    frappe.db.sql('UPDATE `tabPrint Node Action` SET `print_on` = "Submit" WHERE `print_on_submit`=1;')
-	    frappe.db.commit()
+	if frappe.db.sql('''
+			SELECT * FROM information_schema.COLUMNS 
+			WHERE TABLE_SCHEMA=%s
+			AND TABLE_NAME="tabPrint Node Action"
+			AND COLUMN_NAME = "print_on_submit"''', (config.db_name,)):
+		frappe.db.sql('UPDATE `tabPrint Node Action` SET `print_on` = "Submit" WHERE `print_on_submit`=1;')
+		frappe.db.commit()
