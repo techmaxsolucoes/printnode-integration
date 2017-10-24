@@ -5,6 +5,7 @@ import requests
 import datetime
 import frappe
 import hashlib
+import subprocess
 
 from base64 import b64encode, b64decode
 from frappe import _
@@ -14,6 +15,7 @@ from frappe.utils.jinja import render_template
 from frappe.utils.data import scrub_urls
 from frappe.utils.pdf import get_pdf
 from xmlescpos.escpos import Escpos, StyleStack
+from pdfkit.pdfkit import PDFKit
 
 try:
 	from cStringIO import StringIO
@@ -36,6 +38,18 @@ class IOPrinter(Escpos):
 
 	def get_content(self):
 		return self.io.getvalue()
+
+
+class PDFKit(PDFKit):
+	def to_image(self, path):
+		try:
+			return self.to_pdf(path)
+		except UnicodeDecodeError, e:
+			pass
+
+
+class Configuration(object):
+	pass
 
 
 def get_print_content(print_format, doctype, docname, is_escpos=False, is_raw=False):
@@ -79,6 +93,9 @@ def print_via_printnode(action, **kwargs):
 		print_settings = json.loads(action.capabilities)
 	else:
 		print_settings = {}
+
+	if 'collate' in print_settings:
+		print_settings['collate'] = bool(print_settings['collate'])
 
 	printer = frappe.db.get_value("Print Node Hardware", action.printer, "hw_id")
 
