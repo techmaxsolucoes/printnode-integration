@@ -37,5 +37,5 @@ def on_trash(doc, handler=None):
 	settings = frappe.get_doc('Print Node Settings', 'Print Node Settings')
 	if not settings.api_key or settings.allow_deletion_for_printed_documents:
 		for print_job in frappe.get_all('Print Node Job', fields=['name'], 
-			filter={'ref_type': doc.doctype, 'ref_name': doc.name}):
+			filters={'ref_type': doc.doctype, 'ref_name': doc.name}):
 			frappe.delete_doc('Print Node Job', print_job.name)
