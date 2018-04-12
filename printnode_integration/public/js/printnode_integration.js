@@ -1,37 +1,39 @@
+frappe.provide('printnode_integration');
+
+printnode_integration.evaluate_depends_on = function(expression, doc){
+	var out = null;
+	if (expression.substr(0,5) === "eval:"){
+		out = new Function('doc', format('try {return {0} } catch(e){ return false; }', [
+		expression.substr(5)
+		]))(doc.doc);
+	} else if (expression.substr(0,3) === "fn:"){
+		out = cur_frm.script_manager.trigger(
+		expression.substr(3),
+		cur_frm.doctype,
+		cur_frm.docname
+		);
+	} else {
+		var value = doc[expression];
+		if (Array.isArray(value)){
+		out = !!value.length;
+		} else {
+		out = !!value;
+		}
+	}
+	return out;
+};
+
 frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 	get_handlers: function(event_name, doctype, name, callback){
 		var handlers = this._super(event_name, doctype, name, callback),
 			me = this;
-		
-		function evaluate_depends_on(expression, doc){
-			var out = null;
-			if (expression.substr(0,5) === "eval:"){
-				out = new Function('doc', format('try {return {0} } catch(e){ return false; }', [
-				expression.substr(5)
-				]))(doc.doc);
-			} else if (expression.substr(0,3) === "fn:"){
-				out = cur_frm.script_manager.trigger(
-				expression.substr(3),
-				cur_frm.doctype,
-				cur_frm.docname
-				);
-			} else {
-				var value = doc[expression];
-				if (Array.isArray(value)){
-				out = !!value.length;
-				} else {
-				out = !!value;
-				}
-			}
-			return out;
-		};
 
 		function print_attachment(row){
 			var attachments = cur_frm.get_docinfo().attachments.filter(function(row){
 				if (!row.attachment_pattern){
 					return true;
 				}
-				return evaluate_depends_on(row.attachment_pattern, {
+				return printnode_integration.evaluate_depends_on(row.attachment_pattern, {
 					doc: row
 				});
 			}),
@@ -70,19 +72,15 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 			(handlers.new_style || handlers).push(
 				function(){
 					frappe.call({
-						"method": "frappe.client.get_list",
+						"method": "printnode_integration.api.get_print_actions",
 						"args": {
-							"doctype": "Print Node Action",
-							"filters": {
-								"dt": cur_frm.doctype,
-							},
-							"fields": ["name", "action", "printable_type", "attachment_pattern", "depends_on"],
-							"order_by": "idx ASC"
+							"dt": cur_frm.doctype,
+							"is_batch": 0
 						},
 						"callback": function(res){
 							if (res && res.message && res.message.length){
 								res.message.forEach(function(row){
-									if ((row.depends_on && row.depends_on.length) && !evaluate_depends_on(row.depends_on, {"doc": cur_frm.doc})){
+									if ((row.depends_on && row.depends_on.length) && !printnode_integration.evaluate_depends_on(row.depends_on, {"doc": cur_frm.doc})){
 										return;
 									}
 									cur_frm.add_custom_button(row.action, function(){
@@ -109,5 +107,78 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 			);
 		}
 		return handlers;
+	}
+});
+
+
+frappe.views.ListView = frappe.views.ListView.extend({
+	make_bulk_printing: function(){
+		this._super();
+		var me = this,
+			print_settings = frappe.model.get_doc(':Print Settings', 'Print Settings'),
+			allow_print_for_draft = cint(print_settings.allow_print_for_draft),
+			is_submittable = frappe.model.is_submittable(me.doctype),
+			allow_print_for_cancelled = cint(print_settings.allow_print_for_cancelled),
+			actions = [null];
+
+		// get all actions
+		frappe.call({
+			'method': 'printnode_integration.api.get_action_list',
+			'args': {
+				'dt': me.doctype
+			},
+			'callback': function(res){
+				if (res && res.message){
+					res.message.forEach(function(action){
+						action.push({'label': action.action, 'value': action.name});
+					});
+				}
+			}
+		});
+
+		// bulk printing
+		me.page.add_menu_item(__('Print via Print Node'), function(){
+			var items = me.get_checked_items(),
+				valid_docs = items.filter(function(doc){
+					return !is_submittable || doc.docstatus === 1 || 
+						(allow_print_for_cancelled && doc.docstatus == 2) ||
+						(allow_print_for_draft && doc.docstatu == 0) ||
+						frappe.user_roles.includes('Administrator');
+				}).map(function(doc){
+					return {'doctype': me.doctype, 'docname': doc.name}
+				}),
+				invalid_docs = items.filter(function(doc){
+					return !valid_docs.includes({'doctype': me.doctype, 'docname': doc.name});
+				});
+
+				if (invalid_docs.length >= 1){
+					frappe.msgprint(__('You selected Draft of Cancelled documents'));
+					return;
+				}
+
+				if (valid_docs.length >= 1){
+					var dialog = new frappe.ui.Dialog({
+						title: __("Print Documents via Print Node"),
+						fields: [
+							{'fieldtype': 'Select', 'label': __('Action'), 'fieldname': 'action', 'reqd': 1, 'options': actions},
+						]
+					});
+
+					dialog.set_primary_action(__('Print via Print Node'), function(){
+						var args = dialog.get_values();
+						if (!args) return;
+						dialog.hide();
+						frappe.call({
+							'method': 'printnode_integration.api.batch_print_via_printnode',
+							'args': {
+								'action': args.action,
+								'docs': valid_docs
+							},
+							'freeze': true,
+							'freeze_message': format(__('Sending {0} documents to the printer'), [valid_docs.length]),
+						});
+					});
+				}
+		});
 	}
 });

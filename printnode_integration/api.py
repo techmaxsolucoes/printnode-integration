@@ -16,6 +16,7 @@ from frappe.utils.data import scrub_urls
 from frappe.utils.pdf import get_pdf
 from xmlescpos.escpos import Escpos, StyleStack
 from pdfkit.pdfkit import PDFKit
+from six import string_types
 
 try:
 	from cStringIO import StringIO
@@ -145,3 +146,20 @@ def print_via_printnode(action, **kwargs):
 	job.flags.ignore_links = True
 	job.flags.ignore_validate = True
 	job.insert()
+
+@frappe.whitelist()
+def batch_print_via_printnode(action, docs):
+	if isinstance(docs, string_types):
+		docs = json.loads(docs)
+
+	for doc in docs:
+		print_via_printnode(action, **doc)
+
+@frappe.whitelist()
+def get_print_actions(dt):
+	return frappe.get_all('Print Node Action', 
+		fields=["name", "action", "printable_type", "attachment_pattern", "depends_on"],
+		filters={'dt': dt},
+		order_by= 'idx ASC',
+		limit_page_length=50
+	)
