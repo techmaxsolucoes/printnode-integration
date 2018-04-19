@@ -72,7 +72,7 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 			(handlers.new_style || handlers).push(
 				function(){
 					frappe.call({
-						"method": "printnode_integration.api.get_print_actions",
+						"method": "printnode_integration.api.get_action_list",
 						"args": {
 							"dt": cur_frm.doctype,
 							"is_batch": 0
@@ -179,6 +179,6 @@ frappe.views.ListView = frappe.views.ListView.extend({
 						});
 					});
 				}
-		});
+		}, true);
 	}
 });

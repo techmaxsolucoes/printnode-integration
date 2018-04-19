@@ -156,7 +156,7 @@ def batch_print_via_printnode(action, docs):
 		print_via_printnode(action, **doc)
 
 @frappe.whitelist()
-def get_print_actions(dt):
+def get_action_list(dt):
 	return frappe.get_all('Print Node Action', 
 		fields=["name", "action", "printable_type", "attachment_pattern", "depends_on"],
 		filters={'dt': dt},
