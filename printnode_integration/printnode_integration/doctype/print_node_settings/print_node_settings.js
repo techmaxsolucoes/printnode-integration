@@ -14,6 +14,7 @@ frappe.ui.form.on('Print Node Settings', {
 		});
 		frm.set_query("print_format", "actions", function(doc, cdt, cdn){
 			var d = locals[cdt][cdn];
+			if (d.allow_inline_batch) return;
 			return {
 				filters: {
 					"doc_type": d.dt

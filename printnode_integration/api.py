@@ -89,6 +89,8 @@ def print_via_printnode(action, **kwargs):
 		)
 	else:
 		action = frappe.get_doc("Print Node Action", action)
+		if not kwargs.get('doctype') and action.get('print_format'):
+			kwargs['doctype'] = frappe.db.get_value('Print Format', action.print_format, 'doc_type')
 
 	if action.get("capabilities"):
 		print_settings = json.loads(action.capabilities)
@@ -158,7 +160,7 @@ def batch_print_via_printnode(action, docs):
 @frappe.whitelist()
 def get_action_list(dt):
 	return frappe.get_all('Print Node Action', 
-		fields=["name", "action", "printable_type", "attachment_pattern", "depends_on"],
+		fields=["name", "action", "printable_type", "attachment_pattern", "depends_on", "allow_inline_batch", "batch_field"],
 		filters={'dt': dt},
 		order_by= 'idx ASC',
 		limit_page_length=50
