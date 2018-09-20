@@ -85,16 +85,38 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 									}
 									cur_frm.add_custom_button(row.action, function(){
 										if (row.printable_type == "Print Format"){
-											frappe.call({
-												"method": "printnode_integration.api.print_via_printnode",
-												"freeze": true,
-												"freeze_message": __("Sending document to the printer"),
-												"args": {
-													"action": row.name,
-													"doctype": cur_frm.doctype,
-													"docname": cur_frm.docname
+											if (!row.allow_inline_batch){
+												frappe.call({
+													"method": "printnode_integration.api.print_via_printnode",
+													"freeze": true,
+													"freeze_message": __("Sending document to the printer"),
+													"args": {
+														"action": row.name,
+														"doctype": cur_frm.doctype,
+														"docname": cur_frm.docname
+													}
+
+												});
+											} else {
+												if (row.batch_field.indexOf('.') >= 0){
+													var table_field = row.batch_field.split(".")[0];
+													var reference_list = cur_frm.doc[table_field];
+												} else {
+													var reference_list = [cur_frm.doc];
 												}
-											});
+												var inline_field = row.batch_field.split(".");
+												inline_field = inline_field.pop();
+												debugger;
+												frappe.call({
+													'method': 'printnode_integration.api.batch_print_via_printnode',
+													'freeze': true,
+													'freeze_message': __('Sending documents to the printer'),
+													'args': {
+														'action': row.name,
+														'docs': reference_list.map((d) => { return {'docname': d[inline_field]}; })
+													}
+												});
+											}
 										} else {
 											print_attachment(row);
 										}
