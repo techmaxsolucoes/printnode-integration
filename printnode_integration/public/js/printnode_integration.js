@@ -133,9 +133,9 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 });
 
 
-frappe.views.ListView = frappe.views.ListView.extend({
-	make_bulk_printing: function(){
-		this._super();
+frappe.views.ListView = class ListView extends frappe.views.ListView {
+	make_bulk_printing() {
+		super.make_bulk_printing();
 		var me = this,
 			print_settings = frappe.model.get_doc(':Print Settings', 'Print Settings'),
 			allow_print_for_draft = cint(print_settings.allow_print_for_draft),
@@ -203,4 +203,4 @@ frappe.views.ListView = frappe.views.ListView.extend({
 				}
 		}, true);
 	}
-});
+}
