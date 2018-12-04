@@ -10,7 +10,18 @@ import subprocess
 from base64 import b64encode, b64decode
 from frappe import _
 from frappe.utils import flt, cint, get_datetime, date_diff, nowdate, now_datetime
-from frappe.utils.file_manager import get_file
+try:
+	from frappe.utils.file_manager import get_file
+except ImportError:
+	from frappe.core.doctype.file.file import download_file
+        def get_file(file_url):
+		download_file(file_url)
+		file_content = frappe.response.file_content
+		del frappe.local.response.file_content
+		del frappe.local.response.file_name
+		del frappe.local.response.type
+		return [file_url, file_content]
+
 from frappe.utils.jinja import render_template
 from frappe.utils.data import scrub_urls
 from frappe.utils.pdf import get_pdf
@@ -121,7 +132,7 @@ def print_via_printnode(action, **kwargs):
 			options=print_settings
 		)
 	else:
-		print_content = b64encode(get_file(kwargs.get("filename", ""))[1])
+		print_content = b64encode(get_file("File", kwargs.get("filename"))[1])
 		gateway.PrintJob(
 			printer=int(printer),
 			job_type="pdf" if kwargs.get("filename", "").lower().endswith(".pdf") else "raw",
