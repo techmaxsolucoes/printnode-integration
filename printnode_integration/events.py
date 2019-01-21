@@ -23,16 +23,16 @@ def print_via_printnode( doctype, docname, docevent):
 	for d in frappe.get_list("Print Node Action", ["name", "ensure_single_print", "allow_inline_batch", "batch_field"], {"dt": doc.doctype, "print_on": docevent}):
 		if docevent == "Update" and d.ensure_single_print and frappe.db.exists("Print Job", d.name):
 			continue
-		if not row.allow_inline_batch:
+		if not d.allow_inline_batch:
 			api.print_via_printnode(d.name, doctype=doc.doctype, docname=doc.name)
 		else:
-			if '.' in row.batch_field:
-				table_field = row.batch_field.split('.')[0]
+			if '.' in d.batch_field:
+				table_field = d.batch_field.split('.')[0]
 				reference_list = doc.get(table_field)
 			else:
 				reference_list = [doc]
-			inline_field = row.batch_field.split('.')[-1]
-			api.batch_print_via_printnode(d.name, map(lambda d: d.get(inline_field), reference_list))
+			inline_field = d.batch_field.split('.')[-1]
+			api.batch_print_via_printnode(d.name, map(lambda d: frappe._dict(docname=d.get(inline_field)), reference_list))
 
 def after_insert( doc, handler=None ):
 	enqueue('printnode_integration.events.print_via_printnode', enqueue_after_commit=True, doctype=doc.doctype, docname=doc.name, docevent='Insert', now=True)
