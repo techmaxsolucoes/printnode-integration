@@ -83,7 +83,7 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 									if ((row.depends_on && row.depends_on.length) && !printnode_integration.evaluate_depends_on(row.depends_on, {"doc": cur_frm.doc})){
 										return;
 									}
-									cur_frm.add_custom_button(row.action, function(){
+									let btn = cur_frm.add_custom_button(row.action, function(){
 										if (row.printable_type == "Print Format"){
 											if (!row.allow_inline_batch){
 												frappe.call({
@@ -121,6 +121,11 @@ frappe.ui.form.ScriptManager = frappe.ui.form.ScriptManager.extend({
 											print_attachment(row);
 										}
 									}, __('Print Node Integration'));
+									if (row.hotkey && row.hotkey.length){
+										frappe.ui.keys.on(row.hotkey, function(){
+											btn.trigger('click');
+										});
+									}
 								});
 							}
 						}
