@@ -132,7 +132,7 @@ def print_via_printnode(action, **kwargs):
 			options=print_settings
 		)
 	else:
-		print_content = b64encode(get_file("File", kwargs.get("filename"))[1])
+		print_content = b64encode(get_file(kwargs.get("filename"))[1])
 		gateway.PrintJob(
 			printer=int(printer),
 			job_type="pdf" if kwargs.get("filename", "").lower().endswith(".pdf") else "raw",
