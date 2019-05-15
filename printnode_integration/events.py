@@ -7,6 +7,8 @@ from frappe.utils.background_jobs import enqueue
 from . import api
 
 def print_via_printnode( doctype, docname, docevent):
+	if frappe.flags.in_import or frappe.flags.in_patch:
+		return
 	if not frappe.db.exists(doctype, docname):
 		enqueue('printnode_integration.events.print_via_printnode', enqueue_after_commit=False, doctype=doctype, docname=docname, docevent=docevent)
 
