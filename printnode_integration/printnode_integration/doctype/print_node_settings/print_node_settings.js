@@ -89,8 +89,8 @@ frappe.ui.form.on("Print Node Action", "is_raw_text", function(frm, cdt, cdn){
 
 frappe.ui.form.on("Print Node Action", "set_print_job_options", function(frm, cdt, cdn){
 	var d = locals[cdt][cdn],
-	    capabilities = d.capabilities ? JSON.parse(d.capabilities) : {};
-		fields = [
+	    capabilities = d.capabilities ? JSON.parse(d.capabilities) : {},
+	    fields = [
 		{"fieldtype": "Section Break", "label": __("Print Job Options")},
 		{"fieldtype": "Int", "label": ("Copies"), "fieldname": "copies", "default": capabilities.copies, "reqd": 1},
 		{"fieldtype": "Select", "label": ("Rotate"), "fieldname": "rotate", "options": [
@@ -104,7 +104,7 @@ frappe.ui.form.on("Print Node Action", "set_print_job_options", function(frm, cd
 			null,
 			{"label": __("Long Edge"), "value": "long-edge"},
 			{"label": __("Short Edge"), "value": "short-edge"}
-		], "default": capabilities.dupplex}];
+	        ], "default": capabilities.dupplex}];
 
 	frappe.prompt(
 		fields,
