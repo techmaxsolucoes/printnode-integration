@@ -14,7 +14,7 @@ try:
 	from frappe.utils.file_manager import get_file
 except ImportError:
 	from frappe.core.doctype.file.file import download_file
-        def get_file(file_url):
+	def get_file(file_url):
 		download_file(file_url)
 		file_content = frappe.response.file_content
 		del frappe.local.response.file_content
@@ -25,14 +25,18 @@ except ImportError:
 from frappe.utils.jinja import render_template
 from frappe.utils.data import scrub_urls
 from frappe.utils.pdf import get_pdf
-from xmlescpos.escpos import Escpos, StyleStack
+try:
+	from xmlescpos.escpos import Escpos, StyleStack
+except ImportError:
+	from xmlescpos import Layout as Escpos
+	from xmlescpos.layout import StyleStack
 from pdfkit.pdfkit import PDFKit
 from six import string_types
 
 try:
-	from cStringIO import StringIO
-except ImportError:
 	from StringIO import StringIO
+except ImportError:
+	from io import StringIO
 
 try:
 	from printnodeapi.Gateway import Gateway
@@ -56,7 +60,7 @@ class PDFKit(PDFKit):
 	def to_image(self, path):
 		try:
 			return self.to_pdf(path)
-		except UnicodeDecodeError, e:
+		except UnicodeDecodeError as e:
 			pass
 
 

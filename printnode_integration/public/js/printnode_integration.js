@@ -3,7 +3,7 @@ frappe.provide('printnode_integration');
 printnode_integration.evaluate_depends_on = function(expression, doc){
 	var out = null;
 	if (expression.substr(0,5) === "eval:"){
-		out = new Function('doc', format('try {return {0} } catch(e){ return false; }', [
+		out = new Function('doc', frappe.utils.format('try {return {0} } catch(e){ return false; }', [
 		expression.substr(5)
 		]))(doc.doc);
 	} else if (expression.substr(0,3) === "fn:"){
@@ -203,7 +203,7 @@ frappe.views.ListView = class ListView extends frappe.views.ListView {
 								'docs': valid_docs
 							},
 							'freeze': true,
-							'freeze_message': format(__('Sending {0} documents to the printer'), [valid_docs.length]),
+							'freeze_message': frappe.utils.format(__('Sending {0} documents to the printer'), [valid_docs.length]),
 						});
 					});
 				}
